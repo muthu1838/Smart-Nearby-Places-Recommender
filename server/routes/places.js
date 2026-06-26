@@ -3,23 +3,37 @@ import fetch from "node-fetch";
 
 const router = express.Router();
 
-const moodTags = {
-  work: "cafe",
-  date: "restaurant",
-  quick: "fast_food",
-  budget: "food"
-};
-
 router.get("/", async (req, res) => {
   const { lat, lon, mood } = req.query;
-  const tag = moodTags[mood] || "restaurant";
 
-  // 2000 meters radius
+  let queryFilter = "";
+
+  switch (mood) {
+    case "school":
+      queryFilter = `[amenity~"school|college|university"]`;
+      break;
+
+    case "food":
+      queryFilter = `[amenity~"restaurant|cafe|fast_food"]`;
+      break;
+
+    case "hospital":
+      queryFilter = `[amenity~"hospital|clinic"]`;
+      break;
+
+    case "theatre":
+      queryFilter = `[amenity~"theatre|cinema"]`;
+      break;
+
+    default:
+      queryFilter = `[amenity~"school|college|university|restaurant|cafe|fast_food|hospital|clinic|theatre|cinema"]`;
+  }
+
   const query = `
     [out:json];
     node
-      ["amenity"="${tag}"]
-      (around:2000, ${lat}, ${lon});
+      (around:2000, ${lat}, ${lon})
+      ${queryFilter};
     out;
   `;
 

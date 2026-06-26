@@ -8,6 +8,10 @@ app.use(express.json());
 
 app.use("/api/places", placesRoute);
 
-app.listen(5000, () =>
-  console.log("✅ Server running on http://localhost:5000")
-);
+if (process.env.NODE_ENV !== "production") {
+  app.listen(5000, () =>
+    console.log("✅ Server running on http://localhost:5000")
+  );
+}
+
+export default app;
